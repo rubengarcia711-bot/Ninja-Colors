@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 import Gallery from "@/pages/gallery";
 import ColoringCanvas from "@/pages/coloring-canvas";
 import Printable from "@/pages/printable";
+import NinjaColoring from "@/pages/ninja-coloring";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/color/:id" component={ColoringCanvas} />
+      <Route path="/color-ninja/:id" component={NinjaColoring} />
       <Route path="/printable" component={Printable} />
       <Route component={NotFound} />
     </Switch>
