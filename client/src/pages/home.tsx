@@ -5,10 +5,18 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Paintbrush, Palette, Sparkles, Zap, Shield, Printer, Sword } from "lucide-react";
+import { Paintbrush, Palette, Sparkles, Zap, Printer, Sword } from "lucide-react";
 import { NINJA_CHARACTERS, BRAINROT_CHARACTERS } from "@shared/coloring-data";
 import type { ColoringPage } from "@shared/schema";
 import { motion } from "framer-motion";
+
+import ninjaImage1 from "@assets/1768946008623_1768946102237.jpg";
+import ninjaImage2 from "@assets/generated_images/ninja_kid_playground_coloring_page.png";
+import ninjaImage3 from "@assets/generated_images/ninja_kid_kicking_pose_coloring.png";
+import ninjaImage4 from "@assets/generated_images/ninja_kid_crouching_coloring_page.png";
+import ninjaImage5 from "@assets/generated_images/ninja_kid_nunchucks_coloring_page.png";
+
+const NINJA_IMAGES = [ninjaImage1, ninjaImage2, ninjaImage3, ninjaImage4, ninjaImage5];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -45,19 +53,29 @@ function SakuraPetal({ delay, left }: { delay: number; left: string }) {
   );
 }
 
-function CharacterCard({ name, color, type, index }: { name: string; color: string; type: "ninja" | "brainrot"; index: number }) {
+function CharacterCard({ name, color, type, index, image }: { name: string; color: string; type: "ninja" | "brainrot"; index: number; image?: string }) {
   return (
     <motion.div variants={fadeInUp}>
       <Card 
-        className="p-4 min-w-[140px] flex flex-col items-center gap-3 hover-elevate cursor-pointer border-2 border-primary/20"
+        className="p-3 min-w-[140px] flex flex-col items-center gap-2 hover-elevate cursor-pointer border-2 border-primary/20"
         data-testid={`card-character-${type}-${index}`}
       >
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg"
-          style={{ backgroundColor: color }}
-        >
-          {type === "ninja" ? <Shield className="w-8 h-8" /> : <Zap className="w-8 h-8" />}
-        </div>
+        {type === "ninja" && image ? (
+          <div className="w-24 h-28 rounded-xl overflow-hidden bg-white shadow-lg">
+            <img 
+              src={image} 
+              alt={name} 
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+        ) : (
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg"
+            style={{ backgroundColor: color }}
+          >
+            <Zap className="w-8 h-8" />
+          </div>
+        )}
         <span className="text-sm font-bold text-center" data-testid={`text-character-name-${type}-${index}`}>{name}</span>
       </Card>
     </motion.div>
@@ -196,7 +214,7 @@ export default function Home() {
               >
                 {NINJA_CHARACTERS.map((char, index) => (
                   <div key={char.id} className="snap-start">
-                    <CharacterCard name={char.name} color={char.color} type="ninja" index={index} />
+                    <CharacterCard name={char.name} color={char.color} type="ninja" index={index} image={NINJA_IMAGES[index % NINJA_IMAGES.length]} />
                   </div>
                 ))}
               </motion.div>
