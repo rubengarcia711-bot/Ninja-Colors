@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Paintbrush, Home, Download, Printer } from "lucide-react";
+import { Home, Download, Printer, Sword } from "lucide-react";
 import { motion } from "framer-motion";
 
 import ninjaPlayground from "@assets/1768946008623_1768946102237.jpg";
@@ -57,14 +57,18 @@ function printImage(url: string) {
 export default function Printable() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b-2 border-primary/20">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer" data-testid="link-home">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Paintbrush className="w-5 h-5 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
+                <Sword className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-lg hidden sm:block">Ninja vs Brainrot</span>
+              <span className="font-bold text-lg hidden sm:block">
+                <span className="text-primary">Ninja</span>
+                <span className="text-muted-foreground mx-1">vs</span>
+                <span className="text-accent">Brainrot</span>
+              </span>
             </div>
           </Link>
           <nav className="flex items-center gap-2">
@@ -86,7 +90,7 @@ export default function Printable() {
           variants={staggerContainer}
         >
           <motion.div variants={fadeInUp} className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-black mb-4" data-testid="text-printable-title">
+            <h1 className="text-3xl md:text-5xl font-black mb-4" data-testid="text-printable-title">
               <span className="text-primary">Printable</span> Ninja Pages
             </h1>
             <p className="text-muted-foreground text-lg" data-testid="text-printable-description">
@@ -101,7 +105,7 @@ export default function Printable() {
             {PRINTABLE_PAGES.map((page) => (
               <motion.div key={page.id} variants={fadeInUp}>
                 <Card
-                  className="overflow-hidden"
+                  className="overflow-hidden border-2 border-primary/10"
                   data-testid={`card-printable-${page.id}`}
                 >
                   <div className="aspect-[3/4] bg-white flex items-center justify-center">
@@ -111,14 +115,14 @@ export default function Printable() {
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <div className="p-4 space-y-3">
-                    <h3 className="font-bold text-center text-lg" data-testid={`text-printable-name-${page.id}`}>
+                  <div className="p-4 space-y-3 bg-card">
+                    <h3 className="font-black text-center text-lg" data-testid={`text-printable-name-${page.id}`}>
                       {page.name}
                     </h3>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
-                        className="flex-1 rounded-xl"
+                        className="flex-1 rounded-xl border-2 font-bold"
                         onClick={() => downloadImage(page.image, page.name)}
                         data-testid={`button-download-${page.id}`}
                       >
@@ -127,7 +131,7 @@ export default function Printable() {
                       </Button>
                       <Button
                         variant="default"
-                        className="flex-1 rounded-xl"
+                        className="flex-1 rounded-xl font-bold"
                         onClick={() => printImage(page.image)}
                         data-testid={`button-print-${page.id}`}
                       >

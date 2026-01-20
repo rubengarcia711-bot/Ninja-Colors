@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Paintbrush, Home, Palette, Swords, Shield, Zap } from "lucide-react";
+import { Home, Palette, Swords, Shield, Zap, Sword } from "lucide-react";
 import type { ColoringPage } from "@shared/schema";
 import { motion } from "framer-motion";
 
@@ -51,21 +51,25 @@ export default function Gallery() {
 
   const categories: { id: Category; label: string; icon: React.ReactNode }[] = [
     { id: "all", label: "All", icon: <Palette className="w-4 h-4" /> },
-    { id: "ninja", label: "Ninja Kids", icon: <Shield className="w-4 h-4" /> },
+    { id: "ninja", label: "Ninja", icon: <Shield className="w-4 h-4" /> },
     { id: "brainrot", label: "Brainrot", icon: <Zap className="w-4 h-4" /> },
     { id: "battle", label: "Battles", icon: <Swords className="w-4 h-4" /> },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b-2 border-primary/20">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer" data-testid="link-home">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Paintbrush className="w-5 h-5 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
+                <Sword className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-lg hidden sm:block">Ninja vs Brainrot</span>
+              <span className="font-bold text-lg hidden sm:block">
+                <span className="text-primary">Ninja</span>
+                <span className="text-muted-foreground mx-1">vs</span>
+                <span className="text-accent">Brainrot</span>
+              </span>
             </div>
           </Link>
           <nav className="flex items-center gap-2">
@@ -87,20 +91,20 @@ export default function Gallery() {
           variants={staggerContainer}
         >
           <motion.div variants={fadeInUp} className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-black mb-4" data-testid="text-gallery-title">
-              Choose Your <span className="text-primary">Adventure</span>
+            <h1 className="text-3xl md:text-5xl font-black mb-4" data-testid="text-gallery-title">
+              Choose Your <span className="text-primary">Battle</span>
             </h1>
             <p className="text-muted-foreground text-lg" data-testid="text-gallery-description">
-              Pick a character or battle scene to start coloring!
+              Pick a warrior or epic scene to start your coloring adventure!
             </p>
           </motion.div>
 
-          <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-2 mb-8">
+          <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-3 mb-10">
             {categories.map((cat) => (
               <Button
                 key={cat.id}
                 variant={category === cat.id ? "default" : "outline"}
-                className="rounded-full px-6"
+                className="rounded-full px-6 font-bold border-2"
                 onClick={() => setCategory(cat.id)}
                 data-testid={`button-category-${cat.id}`}
               >
@@ -123,21 +127,21 @@ export default function Gallery() {
                 <motion.div key={page.id} variants={fadeInUp}>
                   <Link href={`/color/${page.id}`}>
                     <Card
-                      className="overflow-hidden hover-elevate cursor-pointer group"
+                      className="overflow-hidden hover-elevate cursor-pointer group border-2 border-primary/10"
                       data-testid={`card-coloring-page-${page.id}`}
                     >
-                      <div className="aspect-square bg-muted/30 flex items-center justify-center relative">
+                      <div className="aspect-square bg-white flex items-center justify-center relative">
                         <div
                           className="w-full h-full p-4 transition-transform group-hover:scale-105"
                           dangerouslySetInnerHTML={{ __html: page.svgContent }}
                         />
                         {page.isNew && (
-                          <Badge className="absolute top-2 right-2" variant="default">
+                          <Badge className="absolute top-2 right-2 font-bold" variant="default">
                             NEW
                           </Badge>
                         )}
                         <Badge
-                          className="absolute bottom-2 left-2"
+                          className="absolute bottom-2 left-2 font-bold"
                           variant="secondary"
                         >
                           {page.category === "ninja" && <Shield className="w-3 h-3 mr-1" />}
@@ -146,7 +150,7 @@ export default function Gallery() {
                           {page.category}
                         </Badge>
                       </div>
-                      <div className="p-4">
+                      <div className="p-4 bg-card">
                         <h3 className="font-bold text-center" data-testid={`text-page-name-${page.id}`}>{page.name}</h3>
                       </div>
                     </Card>

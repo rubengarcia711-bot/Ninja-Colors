@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
-  Paintbrush,
   Undo2,
   Redo2,
   Trash2,
   Download,
   PaintBucket,
   ChevronLeft,
+  Sword,
 } from "lucide-react";
 import { COLOR_PALETTE } from "@shared/coloring-data";
 import type { ColoringPage } from "@shared/schema";
@@ -156,7 +156,7 @@ export default function ColoringCanvas() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b-2 border-primary/20">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
             <Skeleton className="w-9 h-9 rounded-xl" />
             <Skeleton className="h-6 w-32" />
@@ -181,15 +181,18 @@ export default function ColoringCanvas() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b-2 border-primary/20">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link href="/gallery">
               <Button variant="ghost" size="icon" className="rounded-xl" data-testid="button-back">
                 <ChevronLeft className="w-5 h-5" />
               </Button>
             </Link>
-            <h1 className="font-bold text-lg truncate" data-testid="text-page-title">{page.name}</h1>
+            <div className="flex items-center gap-2">
+              <Sword className="w-5 h-5 text-primary" />
+              <h1 className="font-black text-lg truncate" data-testid="text-page-title">{page.name}</h1>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -237,7 +240,7 @@ export default function ColoringCanvas() {
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 max-w-6xl mx-auto w-full">
         <div className="flex-1 flex items-center justify-center">
-          <Card className="w-full aspect-square max-w-lg overflow-hidden relative">
+          <Card className="w-full aspect-square max-w-lg overflow-hidden relative border-2 border-primary/20">
             <div
               ref={svgRef}
               className="w-full h-full p-8 bg-white cursor-pointer"
@@ -283,11 +286,11 @@ export default function ColoringCanvas() {
         </div>
 
         <div className="lg:w-80 space-y-4">
-          <Card className="p-4">
-            <h3 className="font-bold mb-3 text-sm text-muted-foreground uppercase tracking-wide" data-testid="text-tools-label">
+          <Card className="p-4 border-2 border-primary/10">
+            <h3 className="font-black mb-3 text-sm text-muted-foreground uppercase tracking-wide" data-testid="text-tools-label">
               How to Color
             </h3>
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl">
+            <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-primary/10">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <PaintBucket className="w-5 h-5 text-primary" />
               </div>
@@ -297,15 +300,15 @@ export default function ColoringCanvas() {
             </div>
           </Card>
 
-          <Card className="p-4">
-            <h3 className="font-bold mb-3 text-sm text-muted-foreground uppercase tracking-wide" data-testid="text-colors-label">
+          <Card className="p-4 border-2 border-primary/10">
+            <h3 className="font-black mb-3 text-sm text-muted-foreground uppercase tracking-wide" data-testid="text-colors-label">
               Colors
             </h3>
             <div className="grid grid-cols-6 gap-2">
               {COLOR_PALETTE.map((color, index) => (
                 <button
                   key={color}
-                  className={`w-10 h-10 rounded-xl transition-transform hover:scale-110 ${
+                  className={`w-10 h-10 rounded-xl transition-all hover:scale-110 shadow-sm ${
                     selectedColor === color
                       ? "ring-2 ring-offset-2 ring-primary ring-offset-background scale-110"
                       : ""
@@ -319,15 +322,15 @@ export default function ColoringCanvas() {
             </div>
           </Card>
 
-          <Card className="p-4">
+          <Card className="p-4 border-2 border-primary/10">
             <div className="flex items-center gap-3">
-              <div className="text-sm text-muted-foreground" data-testid="text-current-color-label">Current color:</div>
+              <div className="text-sm text-muted-foreground font-bold" data-testid="text-current-color-label">Current:</div>
               <div
-                className="w-10 h-10 rounded-xl border-2 border-border"
+                className="w-10 h-10 rounded-xl border-2 border-border shadow-sm"
                 style={{ backgroundColor: selectedColor }}
                 data-testid="current-color-preview"
               />
-              <span className="font-mono text-sm uppercase" data-testid="text-current-color-value">{selectedColor}</span>
+              <span className="font-mono text-sm uppercase font-bold" data-testid="text-current-color-value">{selectedColor}</span>
             </div>
           </Card>
         </div>
