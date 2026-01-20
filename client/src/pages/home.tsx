@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Paintbrush, Palette, Sparkles, Printer, Sword } from "lucide-react";
-import { NINJA_CHARACTERS } from "@shared/coloring-data";
 import { motion } from "framer-motion";
 
 import ninjaImage1 from "@assets/1768946008623_1768946102237.jpg";
@@ -12,8 +11,10 @@ import ninjaImage2 from "@assets/generated_images/ninja_kid_playground_coloring_
 import ninjaImage3 from "@assets/generated_images/ninja_kid_kicking_pose_coloring.png";
 import ninjaImage4 from "@assets/generated_images/ninja_kid_crouching_coloring_page.png";
 import ninjaImage5 from "@assets/generated_images/ninja_kid_nunchucks_coloring_page.png";
+import ninjaImage6 from "@assets/generated_images/female_ninja_girl_coloring_page.png";
 
-const NINJA_IMAGES = [ninjaImage1, ninjaImage2, ninjaImage3, ninjaImage4, ninjaImage5];
+const NINJA_IMAGES = [ninjaImage1, ninjaImage2, ninjaImage3, ninjaImage4, ninjaImage5, ninjaImage6];
+const NINJA_NAMES = ["Playground Punch", "Power Stance", "Flying Kick", "Stealth Mode", "Nunchuck Master", "Ninja Girl"];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -184,7 +185,7 @@ export default function Home() {
               >
                 {NINJA_IMAGES.map((image, index) => (
                   <div key={index} className="snap-start">
-                    <NinjaCard name={NINJA_CHARACTERS[index]?.name || `Ninja ${index + 1}`} index={index} image={image} />
+                    <NinjaCard name={NINJA_NAMES[index]} index={index} image={image} />
                   </div>
                 ))}
               </motion.div>

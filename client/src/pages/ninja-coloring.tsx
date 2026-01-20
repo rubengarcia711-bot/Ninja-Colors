@@ -3,6 +3,7 @@ import { Link, useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
   Download, 
@@ -11,7 +12,9 @@ import {
   Eraser, 
   Paintbrush, 
   Trash2,
-  Home
+  Home,
+  PaintBucket,
+  Save
 } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -21,6 +24,7 @@ import ninjaImage2 from "@assets/generated_images/ninja_kid_playground_coloring_
 import ninjaImage3 from "@assets/generated_images/ninja_kid_kicking_pose_coloring.png";
 import ninjaImage4 from "@assets/generated_images/ninja_kid_crouching_coloring_page.png";
 import ninjaImage5 from "@assets/generated_images/ninja_kid_nunchucks_coloring_page.png";
+import ninjaImage6 from "@assets/generated_images/female_ninja_girl_coloring_page.png";
 
 const NINJA_IMAGES = [
   { src: ninjaImage1, name: "Playground Punch" },
@@ -28,6 +32,7 @@ const NINJA_IMAGES = [
   { src: ninjaImage3, name: "Flying Kick" },
   { src: ninjaImage4, name: "Stealth Mode" },
   { src: ninjaImage5, name: "Nunchuck Master" },
+  { src: ninjaImage6, name: "Ninja Girl" },
 ];
 
 const COLOR_PALETTE = [
@@ -41,9 +46,33 @@ interface HistoryState {
   imageData: ImageData;
 }
 
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 0, g: 0, b: 0 };
+}
+
+function colorsMatch(
+  r1: number, g1: number, b1: number,
+  r2: number, g2: number, b2: number,
+  tolerance: number = 32
+): boolean {
+  return (
+    Math.abs(r1 - r2) <= tolerance &&
+    Math.abs(g1 - g2) <= tolerance &&
+    Math.abs(b1 - b2) <= tolerance
+  );
+}
+
 export default function NinjaColoring() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const ninjaIndex = parseInt(params.id || "0", 10);
   const ninja = NINJA_IMAGES[ninjaIndex] || NINJA_IMAGES[0];
 
@@ -52,11 +81,14 @@ export default function NinjaColoring() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [selectedColor, setSelectedColor] = useState("#E74C3C");
   const [brushSize, setBrushSize] = useState(15);
-  const [tool, setTool] = useState<"brush" | "eraser">("brush");
+  const [tool, setTool] = useState<"brush" | "eraser" | "bucket">("brush");
   const [history, setHistory] = useState<HistoryState[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [hasSavedProgress, setHasSavedProgress] = useState(false);
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
+
+  const getStorageKey = () => `ninja-coloring-${ninjaIndex}`;
 
   const saveToHistory = useCallback(() => {
     const canvas = canvasRef.current;
@@ -76,7 +108,28 @@ export default function NinjaColoring() {
     setHistoryIndex(newHistory.length - 1);
   }, [history, historyIndex]);
 
-  const loadNinjaImage = useCallback(() => {
+  const loadSavedProgress = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return false;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return false;
+
+    const saved = localStorage.getItem(getStorageKey());
+    if (saved) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        setHistory([{ imageData }]);
+        setHistoryIndex(0);
+      };
+      img.src = saved;
+      return true;
+    }
+    return false;
+  }, [ninjaIndex]);
+
+  const loadNinjaImage = useCallback((checkSaved: boolean = true) => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
@@ -108,27 +161,28 @@ export default function NinjaColoring() {
       
       setImageLoaded(true);
       
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      setHistory([{ imageData }]);
-      setHistoryIndex(0);
+      const hasSaved = localStorage.getItem(getStorageKey());
+      setHasSavedProgress(!!hasSaved);
+      
+      if (checkSaved && hasSaved) {
+        loadSavedProgress();
+      } else {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        setHistory([{ imageData }]);
+        setHistoryIndex(0);
+      }
     };
     img.src = ninja.src;
-  }, [ninja.src]);
+  }, [ninja.src, loadSavedProgress, ninjaIndex]);
 
   useEffect(() => {
     loadNinjaImage();
   }, [loadNinjaImage]);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (imageLoaded) {
-        loadNinjaImage();
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [imageLoaded, loadNinjaImage]);
+    const hasSaved = localStorage.getItem(getStorageKey());
+    setHasSavedProgress(!!hasSaved);
+  }, [ninjaIndex]);
 
   const getCanvasCoords = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
@@ -150,6 +204,68 @@ export default function NinjaColoring() {
       x: (e.clientX - rect.left) * scaleX,
       y: (e.clientY - rect.top) * scaleY,
     };
+  };
+
+  const floodFill = (startX: number, startY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const x = Math.floor(startX);
+    const y = Math.floor(startY);
+
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
+
+    const startIdx = (y * width + x) * 4;
+    const startR = data[startIdx];
+    const startG = data[startIdx + 1];
+    const startB = data[startIdx + 2];
+
+    const fillColor = hexToRgb(selectedColor);
+
+    if (colorsMatch(startR, startG, startB, fillColor.r, fillColor.g, fillColor.b, 10)) {
+      return;
+    }
+
+    const visited = new Uint8Array(width * height);
+    const stack: number[] = [y * width + x];
+
+    while (stack.length > 0) {
+      const pixelIdx = stack.pop()!;
+      
+      if (visited[pixelIdx]) continue;
+      
+      const cy = Math.floor(pixelIdx / width);
+      const cx = pixelIdx % width;
+      
+      if (cx < 0 || cx >= width || cy < 0 || cy >= height) continue;
+
+      const idx = pixelIdx * 4;
+      const r = data[idx];
+      const g = data[idx + 1];
+      const b = data[idx + 2];
+
+      if (!colorsMatch(r, g, b, startR, startG, startB, 32)) continue;
+
+      visited[pixelIdx] = 1;
+      data[idx] = fillColor.r;
+      data[idx + 1] = fillColor.g;
+      data[idx + 2] = fillColor.b;
+      data[idx + 3] = 255;
+
+      if (cx + 1 < width) stack.push(pixelIdx + 1);
+      if (cx - 1 >= 0) stack.push(pixelIdx - 1);
+      if (cy + 1 < height) stack.push(pixelIdx + width);
+      if (cy - 1 >= 0) stack.push(pixelIdx - width);
+    }
+
+    ctx.putImageData(imageData, 0, 0);
   };
 
   const draw = (x: number, y: number) => {
@@ -187,14 +303,21 @@ export default function NinjaColoring() {
 
   const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
-    setIsDrawing(true);
     const { x, y } = getCanvasCoords(e);
+
+    if (tool === "bucket") {
+      floodFill(x, y);
+      saveToHistory();
+      return;
+    }
+
+    setIsDrawing(true);
     lastPosRef.current = null;
     draw(x, y);
   };
 
   const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDrawing) return;
+    if (!isDrawing || tool === "bucket") return;
     e.preventDefault();
     const { x, y } = getCanvasCoords(e);
     draw(x, y);
@@ -235,7 +358,23 @@ export default function NinjaColoring() {
   };
 
   const clearCanvas = () => {
-    loadNinjaImage();
+    localStorage.removeItem(getStorageKey());
+    setHasSavedProgress(false);
+    loadNinjaImage(false);
+  };
+
+  const saveProgress = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const dataUrl = canvas.toDataURL("image/png");
+    localStorage.setItem(getStorageKey(), dataUrl);
+    setHasSavedProgress(true);
+    
+    toast({
+      title: "Progress Saved!",
+      description: "Your coloring has been saved. Come back anytime to continue!",
+    });
   };
 
   const downloadImage = () => {
@@ -275,6 +414,11 @@ export default function NinjaColoring() {
             <span className="font-bold text-lg">
               <span className="text-primary">{ninja.name}</span>
             </span>
+            {hasSavedProgress && (
+              <span className="text-xs text-muted-foreground bg-secondary/20 px-2 py-1 rounded-full">
+                Saved
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -316,7 +460,9 @@ export default function NinjaColoring() {
             >
               <canvas
                 ref={canvasRef}
-                className="border-2 border-primary/20 rounded-lg cursor-crosshair touch-none"
+                className={`border-2 border-primary/20 rounded-lg touch-none ${
+                  tool === "bucket" ? "cursor-cell" : "cursor-crosshair"
+                }`}
                 style={{ maxWidth: "100%", maxHeight: "100%" }}
                 onMouseDown={handleStart}
                 onMouseMove={handleMove}
@@ -337,42 +483,52 @@ export default function NinjaColoring() {
           className="lg:w-72 space-y-4"
         >
           <Card className="p-4 space-y-4">
-            <div className="flex gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <Button
                 variant={tool === "brush" ? "default" : "outline"}
-                className="flex-1 rounded-xl"
+                className="rounded-xl"
                 onClick={() => setTool("brush")}
                 data-testid="button-tool-brush"
               >
-                <Paintbrush className="w-4 h-4 mr-2" />
-                Brush
+                <Paintbrush className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={tool === "bucket" ? "default" : "outline"}
+                className="rounded-xl"
+                onClick={() => setTool("bucket")}
+                data-testid="button-tool-bucket"
+              >
+                <PaintBucket className="w-4 h-4" />
               </Button>
               <Button
                 variant={tool === "eraser" ? "default" : "outline"}
-                className="flex-1 rounded-xl"
+                className="rounded-xl"
                 onClick={() => setTool("eraser")}
                 data-testid="button-tool-eraser"
               >
-                <Eraser className="w-4 h-4 mr-2" />
-                Eraser
+                <Eraser className="w-4 h-4" />
               </Button>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Brush Size</span>
-                <span className="text-sm text-muted-foreground">{brushSize}px</span>
+            {tool !== "bucket" && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">
+                    {tool === "brush" ? "Brush" : "Eraser"} Size
+                  </span>
+                  <span className="text-sm text-muted-foreground">{brushSize}px</span>
+                </div>
+                <Slider
+                  value={[brushSize]}
+                  onValueChange={(v) => setBrushSize(v[0])}
+                  min={2}
+                  max={50}
+                  step={1}
+                  className="w-full"
+                  data-testid="slider-brush-size"
+                />
               </div>
-              <Slider
-                value={[brushSize]}
-                onValueChange={(v) => setBrushSize(v[0])}
-                min={2}
-                max={50}
-                step={1}
-                className="w-full"
-                data-testid="slider-brush-size"
-              />
-            </div>
+            )}
 
             <div className="space-y-2">
               <span className="text-sm font-medium">Colors</span>
@@ -388,7 +544,7 @@ export default function NinjaColoring() {
                     style={{ backgroundColor: color }}
                     onClick={() => {
                       setSelectedColor(color);
-                      setTool("brush");
+                      if (tool === "eraser") setTool("brush");
                     }}
                     data-testid={`button-color-${color.replace("#", "")}`}
                   />
@@ -420,6 +576,15 @@ export default function NinjaColoring() {
                 Redo
               </Button>
             </div>
+            <Button
+              variant="outline"
+              onClick={saveProgress}
+              className="w-full rounded-xl"
+              data-testid="button-save"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save Progress
+            </Button>
             <Button
               variant="outline"
               onClick={clearCanvas}

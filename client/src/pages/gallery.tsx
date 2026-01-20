@@ -10,6 +10,7 @@ import ninjaImage2 from "@assets/generated_images/ninja_kid_playground_coloring_
 import ninjaImage3 from "@assets/generated_images/ninja_kid_kicking_pose_coloring.png";
 import ninjaImage4 from "@assets/generated_images/ninja_kid_crouching_coloring_page.png";
 import ninjaImage5 from "@assets/generated_images/ninja_kid_nunchucks_coloring_page.png";
+import ninjaImage6 from "@assets/generated_images/female_ninja_girl_coloring_page.png";
 
 const NINJA_PAGES = [
   { id: 0, src: ninjaImage1, name: "Playground Punch" },
@@ -17,6 +18,7 @@ const NINJA_PAGES = [
   { id: 2, src: ninjaImage3, name: "Flying Kick" },
   { id: 3, src: ninjaImage4, name: "Stealth Mode" },
   { id: 4, src: ninjaImage5, name: "Nunchuck Master" },
+  { id: 5, src: ninjaImage6, name: "Ninja Girl" },
 ];
 
 const fadeInUp = {
@@ -77,7 +79,7 @@ export default function Gallery() {
 
           <motion.div
             variants={staggerContainer}
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6"
           >
             {NINJA_PAGES.map((ninja) => (
               <motion.div key={ninja.id} variants={fadeInUp}>
