@@ -11,6 +11,12 @@ import ninjaImage3 from "@assets/generated_images/ninja_kid_kicking_pose_colorin
 import ninjaImage4 from "@assets/generated_images/ninja_kid_crouching_coloring_page.png";
 import ninjaImage5 from "@assets/generated_images/ninja_kid_nunchucks_coloring_page.png";
 import ninjaImage6 from "@assets/generated_images/female_ninja_girl_coloring_page.png";
+import ninjaGirl1 from "@assets/generated_images/ninja_girl_monkey_bars.png";
+import ninjaGirl2 from "@assets/generated_images/ninja_girl_playground_slide.png";
+import ninjaGirl3 from "@assets/generated_images/ninja_girl_on_swings.png";
+import ninjaGirl4 from "@assets/generated_images/ninja_girl_rope_climbing.png";
+import ninjaGirl5 from "@assets/generated_images/ninja_girl_balance_beam.png";
+import ninjaGirl6 from "@assets/generated_images/ninja_girl_playground_tunnel.png";
 
 const NINJA_PAGES = [
   { id: 0, src: ninjaImage1, name: "Playground Punch" },
@@ -19,6 +25,12 @@ const NINJA_PAGES = [
   { id: 3, src: ninjaImage4, name: "Stealth Mode" },
   { id: 4, src: ninjaImage5, name: "Nunchuck Master" },
   { id: 5, src: ninjaImage6, name: "Ninja Girl" },
+  { id: 6, src: ninjaGirl1, name: "Monkey Bars" },
+  { id: 7, src: ninjaGirl2, name: "Slide Adventure" },
+  { id: 8, src: ninjaGirl3, name: "Swing Time" },
+  { id: 9, src: ninjaGirl4, name: "Rope Climber" },
+  { id: 10, src: ninjaGirl5, name: "Balance Master" },
+  { id: 11, src: ninjaGirl6, name: "Tunnel Sneak" },
 ];
 
 const fadeInUp = {

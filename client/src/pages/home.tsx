@@ -12,9 +12,15 @@ import ninjaImage3 from "@assets/generated_images/ninja_kid_kicking_pose_colorin
 import ninjaImage4 from "@assets/generated_images/ninja_kid_crouching_coloring_page.png";
 import ninjaImage5 from "@assets/generated_images/ninja_kid_nunchucks_coloring_page.png";
 import ninjaImage6 from "@assets/generated_images/female_ninja_girl_coloring_page.png";
+import ninjaGirl1 from "@assets/generated_images/ninja_girl_monkey_bars.png";
+import ninjaGirl2 from "@assets/generated_images/ninja_girl_playground_slide.png";
+import ninjaGirl3 from "@assets/generated_images/ninja_girl_on_swings.png";
+import ninjaGirl4 from "@assets/generated_images/ninja_girl_rope_climbing.png";
+import ninjaGirl5 from "@assets/generated_images/ninja_girl_balance_beam.png";
+import ninjaGirl6 from "@assets/generated_images/ninja_girl_playground_tunnel.png";
 
-const NINJA_IMAGES = [ninjaImage1, ninjaImage2, ninjaImage3, ninjaImage4, ninjaImage5, ninjaImage6];
-const NINJA_NAMES = ["Playground Punch", "Power Stance", "Flying Kick", "Stealth Mode", "Nunchuck Master", "Ninja Girl"];
+const NINJA_IMAGES = [ninjaImage1, ninjaImage2, ninjaImage3, ninjaImage4, ninjaImage5, ninjaImage6, ninjaGirl1, ninjaGirl2, ninjaGirl3, ninjaGirl4, ninjaGirl5, ninjaGirl6];
+const NINJA_NAMES = ["Playground Punch", "Power Stance", "Flying Kick", "Stealth Mode", "Nunchuck Master", "Ninja Girl", "Monkey Bars", "Slide Adventure", "Swing Time", "Rope Climber", "Balance Master", "Tunnel Sneak"];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
