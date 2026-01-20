@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Paintbrush, Palette, Sparkles, Star, Zap, Shield } from "lucide-react";
+import { Paintbrush, Palette, Sparkles, Star, Zap, Shield, Printer } from "lucide-react";
 import { NINJA_CHARACTERS, BRAINROT_CHARACTERS } from "@shared/coloring-data";
 import type { ColoringPage } from "@shared/schema";
 import { motion } from "framer-motion";
@@ -75,6 +75,12 @@ export default function Home() {
               <Button variant="ghost" className="rounded-xl" data-testid="link-gallery">
                 <Palette className="w-4 h-4 mr-2" />
                 Gallery
+              </Button>
+            </Link>
+            <Link href="/printable">
+              <Button variant="ghost" className="rounded-xl" data-testid="link-printable">
+                <Printer className="w-4 h-4 mr-2" />
+                Print
               </Button>
             </Link>
             <ThemeToggle />

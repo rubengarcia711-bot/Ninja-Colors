@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Gallery from "@/pages/gallery";
 import ColoringCanvas from "@/pages/coloring-canvas";
+import Printable from "@/pages/printable";
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/color/:id" component={ColoringCanvas} />
+      <Route path="/printable" component={Printable} />
       <Route component={NotFound} />
     </Switch>
   );
