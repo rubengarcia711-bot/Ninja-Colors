@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { AdBanner } from "@/components/ad-banner";
+import { PremiumModal } from "@/components/premium-modal";
 
 import ninjaImage1 from "@assets/1768946008623_1768946102237.jpg";
 import ninjaImage2 from "@assets/generated_images/ninja_kid_playground_coloring_page.png";
@@ -98,6 +100,7 @@ export default function NinjaColoring() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [hasSavedProgress, setHasSavedProgress] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
 
   const getStorageKey = () => `ninja-coloring-${ninjaIndex}`;
@@ -617,6 +620,16 @@ export default function NinjaColoring() {
           </Card>
         </motion.div>
       </div>
+
+      <AdBanner 
+        position="bottom" 
+        onUpgrade={() => setShowPremiumModal(true)} 
+      />
+
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+      />
     </div>
   );
 }
